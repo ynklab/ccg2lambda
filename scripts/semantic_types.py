@@ -22,7 +22,8 @@ import logging
 import re
 
 from nltk import Tree
-from nltk.compat import string_types
+# string_types is not available in newer NLTK versions, use str for Python 3
+string_types = str
 from nltk.sem.logic import ENTITY_TYPE
 from nltk.sem.logic import TRUTH_TYPE
 from nltk.sem.logic import EVENT_TYPE
