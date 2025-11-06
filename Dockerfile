@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim-bullseye AS build-env
+FROM openjdk:11.0.16-jdk-slim-bullseye AS build-env
 
 RUN apt-get update && \
     apt-get install -y ant git tar wget
