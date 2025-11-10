@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from tqdm import tqdm
 
+from hf_snli import df_train, df_test, df_validation
+
 
 def extract_sentence_text(sentence_elem: ET.Element) -> str:
     """Reconstruct sentence text from the <tokens>/<token> sequence."""
@@ -96,6 +98,12 @@ def get_nli_label(zipf: zipfile.ZipFile, pair_id: str) -> str:
     reads the first non-empty line, and returns the label.
     """
     # pair_id is usually like "{dsname}_train_1.txt"; construct the answer file path
+    part = pair_id.split(".")[0].split("_")
+    if part[0] == "snli":
+        df = df_train if part[1] == "train" else df_test if part[1] == "test" else df_validation
+        label = df.iloc[int(part[2])]['label']
+        return label
+
     answer_path_in_zip = f"results/{pair_id}.answer"
 
     try:
@@ -356,6 +364,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     with zipfile.ZipFile(zip_path, "r") as in_zipf, zipfile.ZipFile(out_zip_path, "a", zipfile.ZIP_DEFLATED) as out_zipf:
         for split in splits:
             entries = collect_entries_for_split(in_zipf, split, dsname)
+            entries.sort(key=lambda x: int(x["ID"].split(".")[0].split("_")[-1]))
 
             json_filename = f"{dsname}_{split}.json"
             write_json(entries, out_zipf, json_filename)

@@ -1,7 +1,8 @@
-import pandas as pd
 import zipfile
 from tqdm import trange
 import math
+
+from hf_snli import df_train, df_test, df_validation
 
 
 def create_zip_from_dataframe(df, zip_filename, split_name, start_idx=0, end_idx=None):
@@ -16,11 +17,6 @@ def create_zip_from_dataframe(df, zip_filename, split_name, start_idx=0, end_idx
             content = f"{premise}\n{hypothesis}\n"
             zipf.writestr(f"snli_{split_name}_{i}.txt", content)
 
-
-splits = {'test': 'plain_text/test-00000-of-00001.parquet', 'validation': 'plain_text/validation-00000-of-00001.parquet', 'train': 'plain_text/train-00000-of-00001.parquet'}
-df_train = pd.read_parquet("hf://datasets/stanfordnlp/snli/" + splits["train"])
-df_test = pd.read_parquet("hf://datasets/stanfordnlp/snli/" + splits["test"])
-df_validation = pd.read_parquet("hf://datasets/stanfordnlp/snli/" + splits["validation"])
 
 # Split train data into 8 zip files
 num_train_files = 8
